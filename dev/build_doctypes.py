@@ -98,9 +98,15 @@ def doctype(name, fields, *, autoname=None, naming_series=None, single=False,
         doc["istable"] = 1
     if autoname:
         doc["autoname"] = autoname
+    if autoname and autoname.startswith("field:"):
+        doc["naming_rule"] = "By fieldname"
+
     if naming_series:
         doc["autoname"] = "naming_series:"
-        doc["naming_series"] = naming_series
+        # NOTE: "naming_series" is NOT a DocType-level property in any Frappe
+        # version — it is a DocField (added to `fields` below), and `autoname`
+        # points at it. What Frappe actually reads is `naming_rule`.
+        doc["naming_rule"] = 'By "Naming Series" field'
     if title_field:
         doc["title_field"] = title_field
     if search_fields:

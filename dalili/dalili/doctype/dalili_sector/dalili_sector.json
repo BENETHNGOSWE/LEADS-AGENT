@@ -101,6 +101,7 @@
  "modified_by": "Administrator",
  "module": "Dalili",
  "name": "Dalili Sector",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

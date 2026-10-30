@@ -436,7 +436,7 @@
  "modified_by": "Administrator",
  "module": "Dalili",
  "name": "Dalili Prospect",
- "naming_series": "PROS-.#####",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

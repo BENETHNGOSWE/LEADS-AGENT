@@ -132,6 +132,7 @@
  "modified_by": "Administrator",
  "module": "Dalili",
  "name": "Dalili Data Source",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

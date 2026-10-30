@@ -170,7 +170,7 @@
  "modified_by": "Administrator",
  "module": "Dalili",
  "name": "Dalili Lead List",
- "naming_series": "LIST-.YYYY.-.#####",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

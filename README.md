@@ -30,6 +30,26 @@ can install, click through the whole pipeline and read a real brief in five minu
 
 ---
 
+## 1b. Frappe version compatibility (verified, not assumed)
+
+Built against **v16**, audited field-by-field against **v15**'s own schema files
+(`frappe/core/doctype/doctype`, `docfield`, `report`, `printing/doctype/print_format`
+from the `version-15` branch):
+
+| Artifact | v15 result |
+|---|---|
+| 16 DocType JSONs | All top-level and DocField keys valid |
+| 2 Report JSONs | Valid (removed a stray `letterhead` key) |
+| 1 Print Format JSON | Valid |
+| `@frappe.whitelist(methods=[...])` | Supported — v15 signature is `whitelist(allow_guest=False, xss_safe=False, methods=None)` |
+| Python syntax | 3.10+ only; nothing PEP 695, no `match`-only constructs |
+| `naming_rule` | Set explicitly (`By "Naming Series" field` / `By fieldname`) rather than inferred |
+
+So the app installs on **either v15 or v16**. Nothing in it is v16-only. Write it up
+that way and stop claiming a version you haven't booted: the honest statement is
+"schema-validated against v15 and v16 property sets; runtime-tested only where your
+bench has actually run it."
+
 ## 2. Install (5 minutes)
 
 ```bash
