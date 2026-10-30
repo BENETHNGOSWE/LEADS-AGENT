@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "prospect",
+  "contact",
+  "cb1",
+  "method",
+  "outcome",
+  "verified_on",
+  "cb2",
+  "verified_by",
+  "cost",
+  "replacement_issued",
+  "next_check_on",
+  "sb_detail",
+  "evidence",
+  "learned_best_time"
+ ],
+ "fields": [
+  {
+   "default": "VER-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "VER-.YYYY.-.#####"
+  },
+  {
+   "fieldname": "prospect",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prospect",
+   "options": "Dalili Prospect",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Contact",
+   "options": "Dalili Contact"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "method",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Method",
+   "options": "Outbound call\nSMS ping\nWhatsApp check\nWebsite check\nSwitchboard\nEmail check\nManual\nImported",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Outcome",
+   "options": "Answered - verified\nWrong person\nLeft company\nDisconnected\nNo answer\nDo not call\nWrong number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "verified_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Verified On"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "cost",
+   "fieldtype": "Float",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "replacement_issued",
+   "fieldtype": "Check",
+   "label": "Replacement Issued",
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_check_on",
+   "fieldtype": "Date",
+   "label": "Next Check On"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_detail",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Small Text",
+   "label": "Evidence / Notes"
+  },
+  {
+   "description": "Derived from answered outcomes for this contact.",
+   "fieldname": "learned_best_time",
+   "fieldtype": "Data",
+   "label": "Learned Best Time",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Verification",
+ "naming_series": "VER-.YYYY.-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "search_fields": "prospect,contact,outcome,method",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "outcome",
+ "track_changes": 1
+}

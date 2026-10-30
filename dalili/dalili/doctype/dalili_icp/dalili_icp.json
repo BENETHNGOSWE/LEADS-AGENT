@@ -1,0 +1,353 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "icp_name",
+  "owner_user",
+  "cb1",
+  "status",
+  "is_recurring",
+  "recurrence",
+  "sb_prompt",
+  "prompt_text",
+  "sb_filters",
+  "sector",
+  "cb2",
+  "region",
+  "district",
+  "sb_size",
+  "employee_band_min",
+  "employee_band_max",
+  "cb3",
+  "revenue_band",
+  "founded_after",
+  "sb_keywords",
+  "include_keywords",
+  "exclude_keywords",
+  "cb4",
+  "languages",
+  "seniority_preference",
+  "sb_signals",
+  "watch_signals",
+  "min_signal_strength",
+  "sb_delivery",
+  "target_count",
+  "min_score",
+  "cb5",
+  "delivery_channel",
+  "delivery_to",
+  "sb_meta",
+  "last_run_on",
+  "total_leads_delivered",
+  "notes"
+ ],
+ "fields": [
+  {
+   "default": "ICP-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "ICP-.YYYY.-.#####"
+  },
+  {
+   "fieldname": "icp_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "ICP Name",
+   "reqd": 1
+  },
+  {
+   "default": "__user",
+   "fieldname": "owner_user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Assigned To",
+   "options": "User"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nActive\nPaused\nArchived"
+  },
+  {
+   "fieldname": "is_recurring",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Recurring"
+  },
+  {
+   "fieldname": "recurrence",
+   "fieldtype": "Select",
+   "label": "Recurrence",
+   "options": "Weekly\nMonthly\nQuarterly"
+  },
+  {
+   "collapsible": 0,
+   "description": "What the customer typed. Kept for the audit trail and for re-parsing.",
+   "fieldname": "sb_prompt",
+   "fieldtype": "Section Break",
+   "label": "Natural Language Brief"
+  },
+  {
+   "fieldname": "prompt_text",
+   "fieldtype": "Long Text",
+   "label": "Prompt"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_filters",
+   "fieldtype": "Section Break",
+   "label": "Target Filters"
+  },
+  {
+   "fieldname": "sector",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sector",
+   "options": "Dalili Sector"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "Dar es Salaam",
+   "description": "Region or city. Blank means anywhere in the country.",
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "label": "Region"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "label": "District / Ward"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_size",
+   "fieldtype": "Section Break",
+   "label": "Company Size"
+  },
+  {
+   "fieldname": "employee_band_min",
+   "fieldtype": "Int",
+   "label": "Employees (min)"
+  },
+  {
+   "fieldname": "employee_band_max",
+   "fieldtype": "Int",
+   "label": "Employees (max)"
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "revenue_band",
+   "fieldtype": "Select",
+   "label": "Revenue Band",
+   "options": "\nBelow TZS 50M\nTZS 50M - 200M\nTZS 200M - 1B\nAbove TZS 1B"
+  },
+  {
+   "fieldname": "founded_after",
+   "fieldtype": "Int",
+   "label": "Founded After"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_keywords",
+   "fieldtype": "Section Break",
+   "label": "Keywords"
+  },
+  {
+   "description": "Comma separated. Company name, product or description must match one of these.",
+   "fieldname": "include_keywords",
+   "fieldtype": "Small Text",
+   "label": "Must Contain"
+  },
+  {
+   "description": "Hard exclusion. Matching companies are dropped before scoring.",
+   "fieldname": "exclude_keywords",
+   "fieldtype": "Small Text",
+   "label": "Must Not Contain"
+  },
+  {
+   "fieldname": "cb4",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "Both",
+   "fieldname": "languages",
+   "fieldtype": "Select",
+   "label": "Outreach Language",
+   "options": "Swahili\nEnglish\nBoth"
+  },
+  {
+   "default": "Any",
+   "fieldname": "seniority_preference",
+   "fieldtype": "Select",
+   "label": "Contact Seniority",
+   "options": "Any\nOwner / Founder\nC-Level\nDirector\nManager\nOfficer"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_signals",
+   "fieldtype": "Section Break",
+   "label": "Buying Signals"
+  },
+  {
+   "description": "Leave empty to watch every active signal type.",
+   "fieldname": "watch_signals",
+   "fieldtype": "Table MultiSelect",
+   "label": "Signals to Watch",
+   "options": "Dalili ICP Signal"
+  },
+  {
+   "default": "0",
+   "fieldname": "min_signal_strength",
+   "fieldtype": "Float",
+   "label": "Minimum Signal Strength"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_delivery",
+   "fieldtype": "Section Break",
+   "label": "Output"
+  },
+  {
+   "default": "50",
+   "fieldname": "target_count",
+   "fieldtype": "Int",
+   "label": "Leads per Run"
+  },
+  {
+   "default": "60",
+   "fieldname": "min_score",
+   "fieldtype": "Int",
+   "label": "Minimum Score"
+  },
+  {
+   "fieldname": "cb5",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "Desk",
+   "fieldname": "delivery_channel",
+   "fieldtype": "Select",
+   "label": "Delivery Channel",
+   "options": "Desk\nWhatsApp\nEmail"
+  },
+  {
+   "fieldname": "delivery_to",
+   "fieldtype": "Data",
+   "label": "Deliver To"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_meta",
+   "fieldtype": "Section Break",
+   "label": "Meta"
+  },
+  {
+   "fieldname": "last_run_on",
+   "fieldtype": "Datetime",
+   "label": "Last Run On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_leads_delivered",
+   "fieldtype": "Int",
+   "label": "Total Leads Delivered",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili ICP",
+ "naming_series": "ICP-.YYYY.-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "icp_name,sector,region",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "icp_name",
+ "track_changes": 1
+}

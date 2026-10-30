@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+*.egg-info/
+.env
+.DS_Store
+node_modules/
+dalili.egg-info/
+*.zip

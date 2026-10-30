@@ -1,0 +1,231 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "list_name",
+  "icp",
+  "cb1",
+  "status",
+  "generated_on",
+  "agent_run",
+  "sb_stats",
+  "total_prospects",
+  "total_contacts",
+  "verified_count",
+  "cb2",
+  "avg_score",
+  "delivered_on",
+  "delivery_channel",
+  "delivered_to",
+  "sb_items",
+  "items",
+  "sb_meta",
+  "criteria_snapshot",
+  "notes"
+ ],
+ "fields": [
+  {
+   "default": "LIST-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "LIST-.YYYY.-.#####"
+  },
+  {
+   "fieldname": "list_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "List Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "icp",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ICP",
+   "options": "Dalili ICP"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "Ready",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nReady\nDelivered\nExported\nArchived"
+  },
+  {
+   "fieldname": "generated_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Generated On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_run",
+   "fieldtype": "Link",
+   "label": "Agent Run",
+   "options": "Dalili Agent Run",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_stats",
+   "fieldtype": "Section Break",
+   "label": "Stats"
+  },
+  {
+   "fieldname": "total_prospects",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Prospects",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_contacts",
+   "fieldtype": "Int",
+   "label": "Contacts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "verified_count",
+   "fieldtype": "Int",
+   "label": "Verified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "avg_score",
+   "fieldtype": "Float",
+   "label": "Average Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivered_on",
+   "fieldtype": "Datetime",
+   "label": "Delivered On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivery_channel",
+   "fieldtype": "Data",
+   "label": "Delivered Via",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivered_to",
+   "fieldtype": "Data",
+   "label": "Delivered To",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_items",
+   "fieldtype": "Section Break",
+   "label": "Leads"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Dalili Lead List Item"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_meta",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "criteria_snapshot",
+   "fieldtype": "Code",
+   "label": "Criteria Snapshot (JSON)",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Lead List",
+ "naming_series": "LIST-.YYYY.-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "search_fields": "list_name,icp,status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "list_name",
+ "track_changes": 1
+}

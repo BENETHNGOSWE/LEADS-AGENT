@@ -1,0 +1,152 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:signal_name",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "signal_name",
+  "category",
+  "cb1",
+  "weight",
+  "decay_days",
+  "is_active",
+  "sb1",
+  "source",
+  "description",
+  "detection_hint"
+ ],
+ "fields": [
+  {
+   "fieldname": "signal_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Signal Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "Registration\nLicence\nTender Award\nTender Publish\nHiring\nShipment / Import\nExpansion\nFunding\nLeadership Change\nSocial Activity\nWebsite Change\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "10",
+   "description": "Base strength of this signal type (0-20). Scaled into the signal score.",
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Weight"
+  },
+  {
+   "default": "90",
+   "fieldname": "decay_days",
+   "fieldtype": "Int",
+   "label": "Decay (days)"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb1",
+   "fieldtype": "Section Break",
+   "label": "Sourcing"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Link",
+   "label": "Typical Source",
+   "options": "Dalili Data Source"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "description": "How the agent should look for this signal.",
+   "fieldname": "detection_hint",
+   "fieldtype": "Small Text",
+   "label": "Detection Hint"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Signal Type",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "signal_name,category",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "signal_name",
+ "track_changes": 1
+}

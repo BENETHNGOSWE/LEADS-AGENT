@@ -1,0 +1,23 @@
+[project]
+name = "dalili"
+version = "0.1.0"
+description = "AI lead-generation agent for Tanzanian B2B sales teams, built on Frappe/ERPNext v16"
+authors = [{ name = "Dalili", email = "hello@dalili.co.tz" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.14"
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0"]
+
+[build-system]
+requires = ["flit_core>=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "dalili"
+
+[tool.pytest.ini_options]
+testpaths = ["dalili/tests", "dev"]
+python_files = "test_*.py"

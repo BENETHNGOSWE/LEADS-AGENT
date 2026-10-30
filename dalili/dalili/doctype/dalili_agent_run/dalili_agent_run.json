@@ -1,0 +1,254 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "icp",
+  "status",
+  "cb1",
+  "started_at",
+  "finished_at",
+  "duration_seconds",
+  "triggered_by",
+  "sb_counts",
+  "discovered",
+  "duplicates_merged",
+  "enriched",
+  "scored",
+  "qualified",
+  "delivered",
+  "cb2",
+  "verification_required",
+  "cost_estimate",
+  "currency",
+  "lead_list",
+  "sb_log",
+  "steps",
+  "error_log",
+  "filters_snapshot"
+ ],
+ "fields": [
+  {
+   "default": "RUN-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "RUN-.YYYY.-.#####"
+  },
+  {
+   "fieldname": "icp",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ICP",
+   "options": "Dalili ICP",
+   "reqd": 1
+  },
+  {
+   "default": "Queued",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Queued\nRunning\nCompleted\nFailed\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "label": "Started At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "finished_at",
+   "fieldtype": "Datetime",
+   "label": "Finished At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "duration_seconds",
+   "fieldtype": "Float",
+   "label": "Duration (s)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "triggered_by",
+   "fieldtype": "Link",
+   "label": "Triggered By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_counts",
+   "fieldtype": "Section Break",
+   "label": "Pipeline Counters"
+  },
+  {
+   "fieldname": "discovered",
+   "fieldtype": "Int",
+   "label": "Discovered",
+   "read_only": 1
+  },
+  {
+   "fieldname": "duplicates_merged",
+   "fieldtype": "Int",
+   "label": "Duplicates Merged",
+   "read_only": 1
+  },
+  {
+   "fieldname": "enriched",
+   "fieldtype": "Int",
+   "label": "Enriched",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scored",
+   "fieldtype": "Int",
+   "label": "Scored",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qualified",
+   "fieldtype": "Int",
+   "label": "Qualified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivered",
+   "fieldtype": "Int",
+   "label": "Delivered",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "verification_required",
+   "fieldtype": "Int",
+   "label": "Needs Verification",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_estimate",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lead_list",
+   "fieldtype": "Link",
+   "label": "Lead List",
+   "options": "Dalili Lead List",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_log",
+   "fieldtype": "Section Break",
+   "label": "Log"
+  },
+  {
+   "fieldname": "steps",
+   "fieldtype": "Table",
+   "label": "Steps",
+   "options": "Dalili Agent Step"
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Long Text",
+   "label": "Error",
+   "read_only": 1
+  },
+  {
+   "fieldname": "filters_snapshot",
+   "fieldtype": "Code",
+   "label": "Filters Snapshot (JSON)",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Agent Run",
+ "naming_series": "RUN-.YYYY.-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "search_fields": "icp,status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "icp",
+ "track_changes": 1
+}

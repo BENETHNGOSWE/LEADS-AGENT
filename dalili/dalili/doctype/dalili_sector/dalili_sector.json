@@ -1,0 +1,162 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:sector_name",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sector_name",
+  "sector_group",
+  "cb1",
+  "is_active",
+  "typical_size",
+  "sb1",
+  "keywords",
+  "google_place_types",
+  "exclude_keywords",
+  "sb2",
+  "signals_to_watch",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "sector_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Sector Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "sector_group",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Sector Group",
+   "options": "Agriculture\nManufacturing\nTrade & Retail\nServices\nHospitality & Tourism\nHealth\nEducation\nConstruction & Real Estate\nTransport & Logistics\nEnergy & Utilities\nICT & Media\nFinancial Services\nPublic Sector\nOther"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active"
+  },
+  {
+   "fieldname": "typical_size",
+   "fieldtype": "Select",
+   "label": "Typical Employee Band",
+   "options": "1-10\n11-50\n51-200\n200+"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb1",
+   "fieldtype": "Section Break",
+   "label": "Matching"
+  },
+  {
+   "description": "Comma separated keywords used to classify a company into this sector.",
+   "fieldname": "keywords",
+   "fieldtype": "Small Text",
+   "label": "Matching Keywords"
+  },
+  {
+   "description": "Comma separated Google Places types, e.g. lodging, restaurant, hospital.",
+   "fieldname": "google_place_types",
+   "fieldtype": "Small Text",
+   "label": "Google Place Types"
+  },
+  {
+   "fieldname": "exclude_keywords",
+   "fieldtype": "Small Text",
+   "label": "Exclusion Keywords"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb2",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "description": "Signal types that usually precede a buying decision in this sector.",
+   "fieldname": "signals_to_watch",
+   "fieldtype": "Small Text",
+   "label": "Signals to Watch"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Sector",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "sector_name,sector_group",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "sector_name",
+ "track_changes": 1
+}

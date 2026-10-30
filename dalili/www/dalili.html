@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dalili — lead agent</title>
+<style>
+  :root{
+    --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f6f8fb;
+    --navy:#1f3b57; --accent:#0b6b3a; --warn:#a06400; --hot:#b3261e;
+    --card:#fff; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;line-height:1.5}
+  header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;
+    align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px}
+  .dot{width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25)}
+  .tag{font-size:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+    padding:3px 9px;border-radius:999px;font-weight:500}
+  .tag.demo{background:rgba(250,204,21,.18);border-color:rgba(250,204,21,.4);color:#fde68a}
+  .who{font-size:12px;opacity:.85}
+  .wrap{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px;
+    padding:18px 22px 60px;max-width:1240px;margin:0 auto}
+  @media (max-width:920px){.wrap{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  .card h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:13px;
+    text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  .chat{display:flex;flex-direction:column;min-height:520px}
+  .messages{padding:16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px;
+    max-height:62vh}
+  .msg{max-width:88%;padding:10px 13px;border-radius:12px;white-space:pre-wrap;word-wrap:break-word}
+  .msg.bot{background:#eef2f7;border-top-left-radius:3px}
+  .msg.user{background:var(--navy);color:#fff;align-self:flex-end;border-top-right-radius:3px}
+  .msg .small{font-size:11px;opacity:.75;display:block;margin-top:6px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px}
+  .chip{font-size:12px;border:1px solid var(--line);background:#fff;border-radius:999px;
+    padding:5px 11px;cursor:pointer;color:var(--navy)}
+  .chip:hover{background:#eef2f7}
+  .composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+  .composer input{flex:1;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+    font-size:14px;outline:none}
+  .composer input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(31,59,87,.1)}
+  button{cursor:pointer;font-family:inherit;font-size:14px}
+  .btn{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:11px 16px;
+    font-weight:600}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line);font-weight:500}
+  .btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
+  .parsed{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12px}
+  .parsed table{width:100%;border-collapse:collapse}
+  .parsed td{padding:6px 10px;border-bottom:1px solid #f1f5f9}
+  .parsed td:first-child{color:var(--muted);width:44%}
+  .parsed tr:last-child td{border-bottom:none}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}
+  .stat{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .stat b{display:block;font-size:19px;line-height:1.2}
+  .stat span{font-size:11px;color:var(--muted)}
+  .list{padding:0;margin:0;list-style:none;max-height:280px;overflow-y:auto}
+  .list li{padding:11px 16px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:13px}
+  .list li:hover{background:#f8fafc}
+  .list .m{font-size:11px;color:var(--muted)}
+  .empty{padding:16px;color:var(--muted);font-size:13px}
+  .brief-body{padding:14px 16px;white-space:pre-wrap;font-size:12.5px;line-height:1.6;
+    max-height:48vh;overflow:auto;background:#fbfcfd;border-top:1px solid var(--line)}
+  .row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .steps{padding:10px 16px;font-size:12px;color:var(--muted)}
+  .steps div{padding:3px 0}
+  .ok{color:var(--accent)} .bad{color:var(--hot)} .warn{color:var(--warn)}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);
+    color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;
+    transition:opacity .2s;pointer-events:none;z-index:99}
+  .toast.show{opacity:1}
+  a.link{color:var(--navy)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="dot"></span> DALILI <span class="tag">lead agent</span>
+    {% if demo_mode %}<span class="tag demo">DEMO DATA</span>{% endif %}
+  </div>
+  <div class="who">
+    {{ user_fullname }} &nbsp;·&nbsp;
+    <a class="link" style="color:#fff" href="/app/dalili-icp">Desk</a> &nbsp;·&nbsp;
+    <a class="link" style="color:#fff" href="/app/dalili-settings">Settings</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ---------------- chat ---------------- -->
+  <section class="card chat">
+    <h3>Tell the agent who you want to reach</h3>
+    <div class="messages" id="messages">
+      <div class="msg bot">Habari {{ user_fullname.split(" ")[0] }}. Niambie unatafuta wateja wa aina gani —
+na mimi nitakutafutia makampuni halisi, nikakupatie namba za watu wa muhimu, na sababu ya kuwapigia simu wiki hii.
+
+<i>Describe your ideal customer in Swahili or English. I'll find verified companies, the decision-maker's number, and the reason to call them this week.</i></div>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip">Hotel za Dar es Salaam zenye wafanyakazi zaidi ya 20</button>
+      <button class="chip">Manufacturers importing raw materials</button>
+      <button class="chip">Logistics companies that won tenders this year</button>
+    </div>
+    <form class="composer" id="composer" autocomplete="off">
+      <input id="prompt" placeholder="e.g. nipe kampuni 20 za ujenzi Dar zenye wafanyakazi zaidi ya 50" />
+      <button class="btn" id="send" type="submit">Send</button>
+    </form>
+  </section>
+
+  <!-- ---------------- side panel ---------------- -->
+  <aside style="display:flex;flex-direction:column;gap:18px">
+    <section class="card">
+      <h3>Pipeline</h3>
+      <div class="stats" id="stats">
+        <div class="stat"><b id="s-prospects">—</b><span>prospects</span></div>
+        <div class="stat"><b id="s-verified">—</b><span>verified</span></div>
+        <div class="stat"><b id="s-rate">—</b><span>verified rate</span></div>
+        <div class="stat"><b id="s-lists">—</b><span>lead lists</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Recent briefs</h3>
+      <ul class="list" id="briefs"><li class="empty">No briefs yet — run the agent.</li></ul>
+    </section>
+
+    <section class="card" id="brief-card" style="display:none">
+      <h3 id="brief-title">Brief</h3>
+      <div class="brief-body" id="brief-body"></div>
+      <div class="row">
+        <button class="btn sm" id="copy-brief">Copy for WhatsApp</button>
+        <button class="btn sm ghost" id="csv-brief">CSV</button>
+        <button class="btn sm ghost" id="open-desk">Open in Desk</button>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CSRF = "{{ csrf_token }}";
+const $ = (id) => document.getElementById(id);
+let lastParsed = null, lastList = null;
+
+function toast(text){
+  const el = $("toast"); el.textContent = text; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 2200);
+}
+function esc(value){
+  return String(value == null ? "" : value).replace(/[&<>"']/g, (c) =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+async function call(method, args, verb){
+  const res = await fetch(`/api/method/${method}`, {
+    method: verb || "POST",
+    headers: {"Content-Type":"application/json","X-Frappe-CSRF-Token":CSRF},
+    body: JSON.stringify(args || {})
+  });
+  const data = await res.json();
+  if (!res.ok || data.exc) {
+    throw new Error((data._server_messages ? JSON.parse(data._server_messages).join(" ") : data.exc) || "Request failed");
+  }
+  return data.message;
+}
+function say(html, who){
+  const div = document.createElement("div");
+  div.className = "msg " + (who || "bot");
+  div.innerHTML = html;
+  $("messages").appendChild(div);
+  $("messages").scrollTop = $("messages").scrollHeight;
+  return div;
+}
+
+/* ------------ stats + briefs ------------ */
+async function loadStats(){
+  try{
+    const s = await call("dalili.api.stats", {}, "POST");
+    $("s-prospects").textContent = s.prospects;
+    $("s-verified").textContent = s.verified;
+    $("s-rate").textContent = (s.verification && s.verification.verified_rate ? s.verification.verified_rate : 0) + "%";
+    $("s-lists").textContent = s.lead_lists;
+  }catch(e){ /* keep quiet on the dashboard */ }
+}
+async function loadBriefs(){
+  try{
+    const rows = await call("dalili.api.list_briefs", {limit: 8}, "POST");
+    if(!rows || !rows.length) return;
+    $("briefs").innerHTML = rows.map(r =>
+      `<li data-name="${esc(r.name)}"><b>${esc(r.list_name)}</b>
+        <div class="m">${r.total_prospects || 0} leads · ${r.verified_count || 0} verified · ${esc(r.status || "")}</div></li>`
+    ).join("");
+    document.querySelectorAll("#briefs li[data-name]").forEach(li => {
+      li.onclick = () => openBrief(li.dataset.name);
+    });
+  }catch(e){}
+}
+async function openBrief(name){
+  try{
+    const b = await call("dalili.api.get_brief", {lead_list: name, channel: "text"}, "POST");
+    lastList = name;
+    $("brief-card").style.display = "block";
+    $("brief-title").textContent = b.list_name;
+    $("brief-body").textContent = b.content;
+    $("brief-card").scrollIntoView({behavior:"smooth", block:"nearest"});
+  }catch(e){ toast(e.message); }
+}
+
+/* ------------ the conversation ------------ */
+$("composer").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const prompt = $("prompt").value.trim();
+  if(!prompt) return;
+  $("prompt").value = "";
+  say(esc(prompt), "user");
+  $("send").disabled = true;
+  const thinking = say("Natafuta… <span class='small'>Searching the universe and scoring matches</span>");
+
+  try{
+    const res = await call("dalili.api.chat", {message: prompt});
+    lastParsed = res.parsed;
+    thinking.remove();
+
+    const p = res.parsed || {};
+    const rows = [
+      ["Sector", p.sector], ["Region", p.region],
+      ["Employees", [p.employee_band_min, p.employee_band_max].filter(x=>x).join(" – ")],
+      ["Leads wanted", p.target_count], ["Signals", (p.watch_signals || []).join(", ")],
+      ["Language", p.languages]
+    ].filter(r => r[1]);
+
+    const table = rows.length
+      ? `<div class="parsed"><table>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</table></div>`
+      : "";
+
+    const questions = (res.questions || []).length
+      ? `<span class="small">${esc((res.questions || []).join(" "))}</span>` : "";
+
+    const node = say(`Nimekuelewa. This is what I'll search for:${table}${questions}
+      <span class="small">Confirm and I'll build the list.</span>`);
+
+    const actions = document.createElement("div");
+    actions.className = "chips";
+    actions.style.padding = "10px 0 0";
+    actions.innerHTML = `<button class="btn sm" id="confirm-run">Run agent</button>
+      <button class="btn sm ghost" id="preview-run">Show 5 samples first</button>`;
+    node.appendChild(actions);
+
+    $("confirm-run").onclick = () => runAgent(prompt);
+    $("preview-run").onclick = () => preview(prompt);
+  }catch(e){
+    thinking.remove();
+    say(`<span class="bad">${esc(e.message)}</span>`);
+  }finally{
+    $("send").disabled = false;
+  }
+});
+
+async function preview(prompt){
+  say("Sending a sample…");
+  try{
+    const res = await call("dalili.api.preview", {message: prompt, limit: 5});
+    const samples = (res.samples || []).map(s =>
+      `• <b>${esc(s.company_name)}</b> — ${esc(s.region || "")} ${s.phone ? "· " + esc(s.phone) : ""}
+        ${(s.signals||[]).length ? "<br><span class='small'>" + esc(s.signals.join(" · ")) + "</span>" : ""}`
+    ).join("\n");
+    say(`${samples || "No matches found — try widening the sector or region."}
+      <span class="small">Estimated universe: ${res.universe_estimate || 0} · providers: ${esc((res.providers||[]).join(", ") || "none")}</span>`);
+  }catch(e){ say(`<span class="bad">${esc(e.message)}</span>`); }
+}
+
+async function runAgent(prompt){
+  const node = say("Creating the ICP and running the agent… <span class='small'>This can take a moment.</span>");
+  try{
+    const res = await call("dalili.api.create_icp", {message: prompt, run_now: 0});
+    const run = await call("dalili.api.run_now", {icp: res.icp});
+    node.remove();
+
+    const counters = run.counters || {};
+    const steps = (run.steps || []).map(s =>
+      `<div>${s.status === "Completed" ? "✓" : s.status === "Failed" ? "✗" : "·"}
+        <b>${esc(s.step)}</b> — in ${s.in ?? 0} / out ${s.out ?? 0}</div>`).join("");
+
+    const node2 = say(
+      `<b class="${run.status === "Completed" ? "ok" : "bad"}">Run ${esc(run.status)}</b>
+       in ${Math.round(run.duration_seconds || 0)}s ·
+       discovered ${counters.discovered || 0} · merged ${counters.duplicates_merged || 0} ·
+       qualified ${counters.qualified || 0} · delivered <b>${counters.delivered || 0}</b>
+       <div class="steps">${steps}</div>
+       ${run.error_log ? `<span class="small bad">${esc(run.error_log.split("\\n")[0])}</span>` : ""}`
+    );
+    if(run.lead_list){
+      const btn = document.createElement("div");
+      btn.className = "chips"; btn.style.padding = "10px 0 0";
+      btn.innerHTML = `<button class="btn sm" id="open-brief-now">Open the brief</button>`;
+      node2.appendChild(btn);
+      $("open-brief-now").onclick = () => openBrief(run.lead_list);
+      openBrief(run.lead_list);
+    }
+    loadStats(); loadBriefs();
+  }catch(e){
+    node.remove();
+    say(`<span class="bad">${esc(e.message)}</span>`);
+  }
+}
+
+/* ------------ brief actions ------------ */
+$("copy-brief").onclick = async () => {
+  try{ await navigator.clipboard.writeText($("brief-body").textContent); toast("Copied for WhatsApp"); }
+  catch(e){ toast("Select the text and copy manually"); }
+};
+$("csv-brief").onclick = async () => {
+  if(!lastList) return;
+  try{
+    const res = await call("dalili.api.export_csv", {lead_list: lastList});
+    window.open(res.file_url, "_blank");
+  }catch(e){ toast(e.message); }
+};
+$("open-desk").onclick = () => { if(lastList) window.open(`/app/dalili-lead-list/${lastList}`, "_blank"); };
+
+document.querySelectorAll("#chips .chip").forEach(btn => {
+  btn.onclick = () => { $("prompt").value = btn.textContent.trim(); $("composer").requestSubmit(); };
+});
+
+loadStats(); loadBriefs();
+</script>
+</body>
+</html>

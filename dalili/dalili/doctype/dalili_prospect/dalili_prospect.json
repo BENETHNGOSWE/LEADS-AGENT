@@ -1,0 +1,498 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-10-30 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company_name",
+  "normalized_key",
+  "cb1",
+  "status",
+  "is_demo",
+  "sb_identity",
+  "legal_name",
+  "sector",
+  "sub_sector",
+  "cb2",
+  "brela_number",
+  "tin",
+  "vat_number",
+  "sb_location",
+  "region",
+  "district",
+  "ward",
+  "cb3",
+  "address",
+  "latitude",
+  "longitude",
+  "sb_contact",
+  "primary_phone",
+  "primary_whatsapp",
+  "primary_email",
+  "cb4",
+  "website",
+  "domain",
+  "employee_band",
+  "revenue_band",
+  "founded_year",
+  "sb_scores",
+  "total_score",
+  "fit_score",
+  "signal_score",
+  "confidence_score",
+  "contactability_score",
+  "cb5",
+  "verified_contacts",
+  "signal_count",
+  "score_breakdown",
+  "sb_verification",
+  "verification_status",
+  "last_verified_on",
+  "next_verification_on",
+  "cb6",
+  "best_contact",
+  "suppressed",
+  "suppression_reason",
+  "sb_erpnext",
+  "lead_doctype",
+  "erpnext_lead",
+  "converted_on",
+  "sb_sources",
+  "sources",
+  "sb_signals",
+  "signals",
+  "sb_notes",
+  "notes"
+ ],
+ "fields": [
+  {
+   "default": "PROS-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "PROS-.#####"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Company Name",
+   "reqd": 1
+  },
+  {
+   "description": "Deterministic entity-resolution key. Auto-generated.",
+   "fieldname": "normalized_key",
+   "fieldtype": "Data",
+   "label": "Match Key",
+   "no_copy": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "New\nEnriched\nScored\nVerified\nQualified\nConverted\nDisqualified\nSuppressed\nArchived"
+  },
+  {
+   "fieldname": "is_demo",
+   "fieldtype": "Check",
+   "label": "Demo Record",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_identity",
+   "fieldtype": "Section Break",
+   "label": "Identity"
+  },
+  {
+   "fieldname": "legal_name",
+   "fieldtype": "Data",
+   "label": "Legal Name"
+  },
+  {
+   "fieldname": "sector",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sector",
+   "options": "Dalili Sector"
+  },
+  {
+   "fieldname": "sub_sector",
+   "fieldtype": "Data",
+   "label": "Sub Sector"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "brela_number",
+   "fieldtype": "Data",
+   "label": "BRELA Number"
+  },
+  {
+   "fieldname": "tin",
+   "fieldtype": "Data",
+   "label": "TIN"
+  },
+  {
+   "fieldname": "vat_number",
+   "fieldtype": "Data",
+   "label": "VAT Number"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_location",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Region"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "label": "District"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Data",
+   "label": "Ward"
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_contact",
+   "fieldtype": "Section Break",
+   "label": "Primary Contact Points"
+  },
+  {
+   "fieldname": "primary_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Primary Phone"
+  },
+  {
+   "fieldname": "primary_whatsapp",
+   "fieldtype": "Data",
+   "label": "Primary WhatsApp"
+  },
+  {
+   "fieldname": "primary_email",
+   "fieldtype": "Data",
+   "label": "Primary Email"
+  },
+  {
+   "fieldname": "cb4",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain"
+  },
+  {
+   "fieldname": "employee_band",
+   "fieldtype": "Select",
+   "label": "Employee Band",
+   "options": "1-10\n11-50\n51-200\n200+"
+  },
+  {
+   "fieldname": "revenue_band",
+   "fieldtype": "Select",
+   "label": "Revenue Band",
+   "options": "\nBelow TZS 50M\nTZS 50M - 200M\nTZS 200M - 1B\nAbove TZS 1B"
+  },
+  {
+   "fieldname": "founded_year",
+   "fieldtype": "Int",
+   "label": "Founded Year"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_scores",
+   "fieldtype": "Section Break",
+   "label": "Scores"
+  },
+  {
+   "fieldname": "total_score",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fit_score",
+   "fieldtype": "Float",
+   "label": "Fit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signal_score",
+   "fieldtype": "Float",
+   "label": "Signal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "confidence_score",
+   "fieldtype": "Float",
+   "label": "Confidence",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contactability_score",
+   "fieldtype": "Float",
+   "label": "Contactability",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb5",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "verified_contacts",
+   "fieldtype": "Int",
+   "label": "Verified Contacts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signal_count",
+   "fieldtype": "Int",
+   "label": "Signals",
+   "read_only": 1
+  },
+  {
+   "fieldname": "score_breakdown",
+   "fieldtype": "Code",
+   "label": "Score Breakdown (JSON)",
+   "no_copy": 1,
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_verification",
+   "fieldtype": "Section Break",
+   "label": "Verification"
+  },
+  {
+   "default": "Unverified",
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Verification Status",
+   "options": "Unverified\nPartial\nVerified\nStale\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_verified_on",
+   "fieldtype": "Date",
+   "label": "Last Verified On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_verification_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Next Verification On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb6",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "best_contact",
+   "fieldtype": "Link",
+   "label": "Best Contact",
+   "options": "Dalili Contact",
+   "read_only": 1
+  },
+  {
+   "fieldname": "suppressed",
+   "fieldtype": "Check",
+   "label": "Suppressed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "suppression_reason",
+   "fieldtype": "Small Text",
+   "label": "Suppression Reason",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_erpnext",
+   "fieldtype": "Section Break",
+   "label": "ERPNext Link"
+  },
+  {
+   "fieldname": "lead_doctype",
+   "fieldtype": "Link",
+   "label": "Lead DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "erpnext_lead",
+   "fieldtype": "Dynamic Link",
+   "label": "ERPNext Lead",
+   "options": "lead_doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "converted_on",
+   "fieldtype": "Datetime",
+   "label": "Converted On",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_sources",
+   "fieldtype": "Section Break",
+   "label": "Source Trail"
+  },
+  {
+   "fieldname": "sources",
+   "fieldtype": "Table",
+   "label": "Sources",
+   "options": "Dalili Source Ref"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_signals",
+   "fieldtype": "Section Break",
+   "label": "Buying Signals"
+  },
+  {
+   "fieldname": "signals",
+   "fieldtype": "Table",
+   "label": "Signals",
+   "options": "Dalili Signal"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-30 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dalili",
+ "name": "Dalili Prospect",
+ "naming_series": "PROS-.#####",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Dalili Agent",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 0
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "company_name,primary_phone,region,domain,brela_number",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "company_name",
+ "track_changes": 1
+}
