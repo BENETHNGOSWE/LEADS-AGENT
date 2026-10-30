@@ -20,7 +20,7 @@ can install, click through the whole pipeline and read a real brief in five minu
 |---|---|---|
 | Frappe Framework | **v16** | `version-16` branch |
 | ERPNext | **v16** | required for the CRM hand-over (`Lead`) |
-| Python | **3.14** | hard minimum for Frappe v16 |
+| Python | **3.14** | required by Frappe v16 itself. The *app package* declares `>=3.10` so `pip install -e .` never blocks a bench that is still on 3.13/3.12 — it does not relax Frappe's own requirement. |
 | Node.js | **24** | for `bench build` |
 | MariaDB | 10.6+ | Redis 7 recommended |
 | bench | latest | standard install |
