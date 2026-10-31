@@ -209,14 +209,11 @@ def on_lead_update(doc, method=None):
 
 
 def conversion_stats() -> dict:
-    rows = frappe.get_all(
-        "Dalili Prospect",
-        filters={"status": "Converted"},
-        fields=["count(name) as total"],
-    )
-    converted = (rows[0]["total"] if rows else 0) or 0
-    all_rows = frappe.get_all("Dalili Prospect", fields=["count(name) as total"])
-    total = (all_rows[0]["total"] if all_rows else 0) or 0
+    # frappe.db.count() rather than fields=["count(name) as total"]: Frappe v16
+    # rejects SQL functions embedded in the fields list ("SQL functions are not
+    # allowed as strings in SELECT"), and db.count works on every version.
+    converted = frappe.db.count("Dalili Prospect", {"status": "Converted"})
+    total = frappe.db.count("Dalili Prospect")
     return {
         "converted": converted,
         "total": total,

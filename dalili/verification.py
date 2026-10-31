@@ -246,11 +246,18 @@ def queue_stale_prospects() -> int:
 
 def verification_stats(*, days: int = 90) -> dict:
     """Feed the dashboard and the 'verified rate' promise."""
-    rows = frappe.get_all(
-        "Dalili Verification",
-        filters={"verified_on": (">=", add_days(nowdate(), -days))},
-        fields=["outcome", "method", "count(name) as total"],
-        group_by="outcome",
+    # Grouped aggregate needs real SQL. Frappe v16 forbids "count(name) as total"
+    # inside get_all's fields, so this is an explicit parameterised query — and
+    # grouping by (outcome, method) keeps it valid under ONLY_FULL_GROUP_BY.
+    rows = frappe.db.sql(
+        """
+        SELECT outcome, method, COUNT(*) AS total
+        FROM `tabDalili Verification`
+        WHERE verified_on >= %(cutoff)s
+        GROUP BY outcome, method
+        """,
+        {"cutoff": add_days(nowdate(), -days)},
+        as_dict=True,
     )
     total = sum(r["total"] for r in rows) or 0
     good = sum(r["total"] for r in rows if r["outcome"] in GOOD_OUTCOMES)
