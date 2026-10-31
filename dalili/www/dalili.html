@@ -81,8 +81,20 @@
 #brief-card{position:fixed;top:72px;right:24px;bottom:24px;width:min(760px,92vw);z-index:60;
   display:none;flex-direction:column;box-shadow:0 24px 60px rgba(15,23,42,.30)}
 #brief-card.open{display:flex}
-#brief-card .brief-body{overflow:auto;flex:1;white-space:pre-wrap}
-#brief-card .row{margin-top:10px}
+#brief-card .brief-body{overflow:auto;flex:1;white-space:pre-wrap;max-height:none;
+  padding:6px 22px 22px;font-size:13px;line-height:1.65;background:#fff;border-top:0}
+#brief-card h3{padding:18px 22px 12px;margin:0;border-bottom:1px solid var(--line);
+  font-size:14px;letter-spacing:.02em}
+#brief-card .row{margin-top:0;border-top:1px solid var(--line);gap:8px}
+#brief-scrim{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:55;display:none}
+#brief-scrim.open{display:block}
+.brief-close{position:absolute;top:14px;right:16px;border:0;background:transparent;
+  font-size:22px;line-height:1;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px}
+.brief-close:hover{background:#f1f5f9;color:var(--ink)}
+/* links inside a pre-wrap block inherit the mono rhythm instead of going browser-blue */
+#brief-body a{color:inherit;text-decoration:underline;text-decoration-color:#c9d2dd;
+  text-underline-offset:2px}
+#brief-body a:hover{text-decoration-color:var(--navy)}
 </style>
 </head>
 <body>
@@ -135,14 +147,15 @@ na mimi nitakutafutia makampuni halisi, nikakupatie namba za watu wa muhimu, na 
       <ul class="list" id="briefs"><li class="empty">No briefs yet — run the agent.</li></ul>
     </section>
 
-    <section class="card" id="brief-card" style="display:none">
+    <div id="brief-scrim"></div>
+    <section class="card" id="brief-card" aria-hidden="true">
+      <button class="brief-close" id="close-brief" title="Close (Esc)" aria-label="Close">×</button>
       <h3 id="brief-title">Brief</h3>
       <div class="brief-body" id="brief-body"></div>
       <div class="row">
         <button class="btn sm" id="copy-brief">Copy for WhatsApp</button>
         <button class="btn sm ghost" id="csv-brief">CSV</button>
         <button class="btn sm ghost" id="open-desk">Open in Desk</button>
-        <button class="btn sm ghost" id="close-brief">Close</button>
       </div>
     </section>
   </aside>
@@ -237,19 +250,43 @@ async function loadBriefs(){
     $("briefs").classList.add("failed");
   }
 }
+/* Escape first, then linkify — the brief is plain text, so it is safe to do it
+   in that order and the wa.me links become tappable without letting HTML through. */
+function linkify(text){
+  return esc(text).replace(/https?:\/\/[^\s<]+/g,
+    url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+}
 async function openBrief(name){
+  if(!name){ toast("That run produced no lead list"); return; }
+  $("brief-title").textContent = "Loading…";
+  $("brief-body").textContent = "";
+  showBriefCard(true);                      // open first: never a dead click
   try{
     const b = await call("dalili.api.get_brief", {lead_list: name, channel: "text"}, "GET");
     lastList = name;
-    $("brief-card").classList.add("open");
-    $("brief-title").textContent = b.list_name;
-    $("brief-body").textContent = b.content;
-    
-  }catch(e){ toast(e.message); }
+    $("brief-title").textContent = b.list_name || name;
+    $("brief-body").innerHTML = linkify(b.content || "(empty brief)");
+    document.querySelectorAll("#briefs li[data-name]").forEach(li =>
+      li.style.background = li.dataset.name === name ? "#eef2f7" : "");
+  }catch(e){
+    $("brief-title").textContent = "Brief unavailable";
+    $("brief-body").textContent = "Could not load this brief.\n\n" + e.message;
+    console.error("Dalili brief failed:", e);
+  }
 }
 
 /* ------------ the conversation ------------ */
-$("close-brief").addEventListener("click", () => $("brief-card").classList.remove("open"));
+function showBriefCard(on){
+  $("brief-card").classList.toggle("open", on);
+  $("brief-scrim").classList.toggle("open", on);
+  $("brief-card").setAttribute("aria-hidden", on ? "false" : "true");
+  document.body.style.overflow = on ? "hidden" : "";
+}
+$("close-brief").addEventListener("click", () => showBriefCard(false));
+$("brief-scrim").addEventListener("click", () => showBriefCard(false));
+document.addEventListener("keydown", (ev) => {
+  if(ev.key === "Escape" && $("brief-card").classList.contains("open")) showBriefCard(false);
+});
 
 $("composer").addEventListener("submit", async (ev) => {
   ev.preventDefault();
@@ -338,8 +375,9 @@ async function runAgent(prompt){
       btn.className = "chips"; btn.style.padding = "10px 0 0";
       btn.innerHTML = `<button class="btn sm" id="open-brief-now">Open the brief</button>`;
       node2.appendChild(btn);
+      $("messages").scrollTop = $("messages").scrollHeight;
       $("open-brief-now").onclick = () => openBrief(run.lead_list);
-      openBrief(run.lead_list);
+      if(run.status === "Completed") openBrief(run.lead_list);
     }
     loadStats(); loadBriefs();
   }catch(e){
