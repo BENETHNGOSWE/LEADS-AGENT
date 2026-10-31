@@ -90,11 +90,35 @@ def build_text(lead_list_name: str, *, limit: int = MAX_TEXT_ITEMS) -> str:
                     lines.append(f"   💬 {opener}")
         lines.append("")
 
+    # ODbL requires attribution wherever OpenStreetMap-derived rows are published.
+    # Quietly skipping this would put every customer in breach on our behalf.
+    if _uses_openstreetmap(lead_list):
+        lines.append("Company names & locations partly from © OpenStreetMap contributors (ODbL).")
+
     if settings.brief_signature:
         lines.append(f"— {settings.brief_signature}")
     if settings.replace_bad_leads:
         lines.append("Wrong number? Reply BAD <n> and we replace it free.")
     return "\n".join(lines).strip()
+
+
+def _uses_openstreetmap(lead_list) -> bool:
+    """True if any included row traces back to an OSM source ref."""
+    prospects = [row.prospect for row in lead_list.items if row.included and row.prospect]
+    if not prospects:
+        return False
+    return bool(
+        frappe.get_all(
+            "Dalili Source Ref",
+            filters={
+                "parent": ["in", prospects],
+                "parenttype": "Dalili Prospect",
+                "source_label": "OpenStreetMap",
+            },
+            limit=1,
+            pluck="name",
+        )
+    )
 
 
 def _opener(lead_list, row) -> str:

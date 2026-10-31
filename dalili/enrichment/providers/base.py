@@ -85,6 +85,7 @@ def load_providers(*, discovery_only=False):
     from dalili.enrichment.providers.demo import DemoProvider
     from dalili.enrichment.providers.google_places import GooglePlacesProvider
     from dalili.enrichment.providers.llm import LLMProvider
+    from dalili.enrichment.providers.osm import OSMProvider
     from dalili.enrichment.providers.registry import RegistryProvider
 
     settings = frappe.get_cached_doc("Dalili Settings")
@@ -107,10 +108,14 @@ def load_providers(*, discovery_only=False):
         "CSV Upload": RegistryProvider,
         "LLM Research": LLMProvider,
         "Manual": DemoProvider,
+        "Open Map Data": OSMProvider,
     }
 
     for row in rows:
+        # Demo rows only run in Demo Mode; real rows never run alongside them.
         if row.source_type == "Manual" and not demo_mode:
+            continue
+        if row.source_type == "Open Map Data" and demo_mode:
             continue
         cls = mapping.get(row.source_type)
         if not cls:

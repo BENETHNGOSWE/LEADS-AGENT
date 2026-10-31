@@ -204,3 +204,18 @@ def purge() -> str:
 def reset() -> str:
     purge()
     return run(force=1)
+
+
+def purge_demo_only():
+    """Delete synthetic rows only. Keeps anything created outside Demo Mode.
+
+        bench --site <site> execute dalili.demo.seed.purge_demo_only
+    """
+    from dalili.demo import seed as _seed
+
+    before = {dt: frappe.db.count(dt) for dt in
+              ("Dalili Prospect", "Dalili Contact", "Dalili Lead List", "Dalili Agent Run")}
+    _seed.purge()
+    after = {dt: frappe.db.count(dt) for dt in before}
+    print(f"purged demo rows: {before} -> {after}")
+    return after

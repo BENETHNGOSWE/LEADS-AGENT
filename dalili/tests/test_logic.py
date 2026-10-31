@@ -342,5 +342,83 @@ class TestICP(unittest.TestCase):
         self.assertIn("budget lodges", (p["exclude_keywords"] or ""))
 
 
+class TestOpenStreetMapRules(unittest.TestCase):
+    """The free live source. Parsing must be exact — it is real customer data."""
+
+    def _elements(self):
+        return [
+            {"type": "node", "id": 1, "tags": {
+                "name": "Holiday Inn Dar Es Salaam", "tourism": "hotel",
+                "phone": "+255 22 2139250", "addr:city": "Dar es Salaam",
+                "addr:street": "Azikiwe Street", "addr:housenumber": "4"}},
+            {"type": "way", "id": 2, "tags": {
+                "name": "Mbezi Lodge", "tourism": "guest_house",
+                "contact:phone": "0677301314 , 0782593226", "addr:suburb": "Kinondoni",
+                "website": "https://mbezilodge.co.tz/rooms"}},
+            {"type": "node", "id": 3, "tags": {"tourism": "hotel"}},          # no name
+            {"type": "node", "id": 4, "tags": {
+                "name": "Kariakoo Hardware", "shop": "hardware",
+                "email": "SALES@Example.co.tz"}},
+        ]
+
+    def test_sector_mapping(self):
+        from dalili.logic.osm_rules import sector_for_tags
+        self.assertEqual(sector_for_tags({"tourism": "hotel"}), "Hospitality & Tourism")
+        self.assertEqual(sector_for_tags({"amenity": "pharmacy"}), "Health")
+        self.assertEqual(sector_for_tags({"shop": "hardware"}), "Trade & Retail")
+        self.assertEqual(sector_for_tags({"office": "logistics"}), "Transport & Logistics")
+        self.assertEqual(sector_for_tags({"name": "x"}), "")
+
+    def test_parse_drops_unnamed_and_normalises(self):
+        from dalili.logic.osm_rules import parse_elements
+        recs = parse_elements(self._elements(), default_region="Dar es Salaam")
+        self.assertEqual(len(recs), 3)                      # unnamed POI dropped
+        names = [r["company_name"] for r in recs]
+        self.assertNotIn("", names)
+
+        holiday = next(r for r in recs if r["company_name"].startswith("Holiday Inn"))
+        self.assertEqual(holiday["primary_phone"], "+255222139250")
+        self.assertEqual(holiday["city" if "city" in holiday else "region"], "Dar es Salaam")
+        self.assertEqual(holiday["address"], "4 Azikiwe Street")
+        self.assertEqual(holiday["sector"], "Hospitality & Tourism")
+        self.assertTrue(holiday["source_url"].startswith("https://www.openstreetmap.org/node/1"))
+
+    def test_multi_phone_keeps_first(self):
+        from dalili.logic.osm_rules import parse_elements
+        recs = parse_elements(self._elements())
+        mbezi = next(r for r in recs if r["company_name"] == "Mbezi Lodge")
+        self.assertEqual(mbezi["primary_phone"], "+255677301314")
+        self.assertEqual(mbezi["domain"], "mbezilodge.co.tz")
+        self.assertEqual(mbezi["district"], "Kinondoni")
+        self.assertEqual(mbezi["source_id"], "way/2")
+
+    def test_email_lowercased_and_region_default(self):
+        from dalili.logic.osm_rules import parse_elements
+        recs = parse_elements(self._elements(), default_region="Dar es Salaam")
+        hw = next(r for r in recs if r["company_name"] == "Kariakoo Hardware")
+        self.assertEqual(hw["primary_email"], "sales@example.co.tz")
+        self.assertEqual(hw["region"], "Dar es Salaam")     # from default, not the tags
+        self.assertEqual(hw["sector"], "Trade & Retail")
+
+    def test_query_is_valid_overpass_ql(self):
+        from dalili.logic.osm_rules import build_query
+        q = build_query({"sector": "Hospitality & Tourism", "region": "Dar es Salaam"}, limit=25)
+        self.assertIn('area["name"="Dar es Salaam"]', q)
+        self.assertIn('["tourism"~"hotel', q)
+        self.assertIn("out tags center 25", q)
+        # (if: exists(name)) is invalid Overpass QL and returns HTTP 400 — never again
+        self.assertNotIn("if: exists", q)
+
+    def test_query_without_region_falls_back_to_country(self):
+        from dalili.logic.osm_rules import build_query
+        q = build_query({"sector": "Services"}, limit=10)
+        self.assertIn('["ISO3166-1"="TZ"]', q)
+
+    def test_unknown_sector_falls_back_to_default_tags(self):
+        from dalili.logic.osm_rules import build_query
+        q = build_query({"sector": "Mining", "region": "Mwanza"}, limit=10)
+        self.assertIn('["office"="company"]', q)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

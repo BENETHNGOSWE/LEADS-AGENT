@@ -9,6 +9,8 @@ defaults) is created here rather than shipped as fixtures, because:
 
 from __future__ import annotations
 
+import json
+
 import frappe
 
 from dalili import integration
@@ -100,6 +102,8 @@ DATA_SOURCES = [
     # (name, type, enabled, priority, reliability, endpoint, notes)
     ("Demo Places", "Manual", 1, 99, 60, "",
      "Synthetic universe used in Demo Mode. Disable once a real API key is configured."),
+    ("OpenStreetMap", "Open Map Data", 1, 15, 55, "",
+     "Free, keyless, legal (ODbL). Good names/sectors/wards; phones are sparse (~4% in Dar)."),
     ("Google Places", "Places API", 0, 10, 70, "",
      "Official Places API (v1) Text Search. Add an API key, then enable. Never scrape Maps."),
     ("BRELA Register", "Company Registry", 0, 20, 85, "",
@@ -253,3 +257,138 @@ def backfill_lead_list_verified():
     frappe.db.commit()
     print(f"backfilled verified_on on {fixed} lead-list item(s)")
     return fixed
+
+
+# ---------------------------------------------------------------------------
+# Going live
+# ---------------------------------------------------------------------------
+def live_status() -> dict:
+    """What will actually happen on the next run. Run this before blaming the agent.
+
+        bench --site <site> execute dalili.install.live_status
+    """
+    settings = frappe.get_cached_doc("Dalili Settings")
+    demo_mode = bool(settings.demo_mode)
+    rows = frappe.get_all(
+        "Dalili Data Source",
+        fields=["name", "source_name", "source_type", "enabled", "priority", "api_key", "endpoint"],
+        order_by="priority asc",
+    )
+
+    # Source types that have a real adapter in dalili/enrichment/providers/.
+    implemented = {"Places API", "Company Registry", "CSV Upload", "Open Map Data"}
+    active, inactive, stubs = [], [], []
+
+    for row in rows:
+        has_key = bool(row.api_key)
+        has_endpoint = bool((row.endpoint or "").strip())
+        item = {
+            "source": row.source_name,
+            "type": row.source_type,
+            "priority": row.priority,
+            "key": "yes" if has_key else "",
+            "endpoint": row.endpoint or "",
+        }
+        if row.source_type in ("Trade Data", "Job Board", "Tender Portal", "Website"):
+            stubs.append(item)
+            continue
+        if not row.enabled:
+            inactive.append(item)
+            continue
+        if row.source_type == "Places API" and not has_key:
+            item["missing"] = "API key"
+            inactive.append(item)
+            continue
+        if row.source_type in ("Company Registry", "CSV Upload") and not has_endpoint:
+            item["missing"] = "CSV path"
+            inactive.append(item)
+            continue
+        if row.source_type == "Manual" and not demo_mode:
+            inactive.append(item)
+            continue
+        if row.source_type not in implemented:
+            continue
+        active.append(item)
+
+    report = {
+        "demo_mode": demo_mode,
+        "active_providers": active,
+        "inactive": inactive,
+        "not_implemented": stubs,
+        "llm": {
+            "enabled": bool(getattr(settings, "llm_enabled", 0)),
+            "model": settings.llm_model or "",
+            "key_set": bool(settings.get_password("llm_api_key", raise_exception=False)
+                            if getattr(settings, "llm_enabled", 0) else False),
+        },
+        "verdict": (
+            "DEMO — synthetic companies, nothing real will be fetched"
+            if demo_mode else
+            ("LIVE — " + ", ".join(a["source"] for a in active)) if active
+            else "LIVE but NO provider is usable: enable Google Places with a key, "
+                 "or OpenStreetMap, or point a registry CSV at a path"
+        ),
+    }
+    print(json.dumps(report, indent=2))
+    return report
+
+
+def configure_live(
+    *,
+    places_api_key: str | None = None,
+    llm_api_key: str | None = None,
+    llm_model: str | None = None,
+    llm_base_url: str | None = None,
+    registry_csv: str | None = None,
+    disable_demo: bool = True,
+    disable_osm: bool = False,
+) -> str:
+    """Turn the demo site into a live one. One command, no Desk clicking.
+
+        bench --site <site> execute dalili.install.configure_live \
+          --kwargs '{"places_api_key": "AIza...", "disable_demo": true}'
+    """
+    settings = frappe.get_cached_doc("Dalili Settings")
+    changed: list[str] = []
+
+    def source(name, **values):
+        row_name = frappe.db.get_value("Dalili Data Source", {"source_name": name}, "name")
+        if not row_name:
+            frappe.throw(f"No Dalili Data Source named {name}. Reinstall or run dalili.install.seed_data_sources()")
+        doc = frappe.get_doc("Dalili Data Source", row_name)
+        for field, value in values.items():
+            if value is not None:
+                setattr(doc, field, value)
+        doc.flags.ignore_permissions = True
+        doc.save()
+        changed.append(name)
+
+    if places_api_key:
+        source("Google Places", api_key=places_api_key, enabled=1)
+    if registry_csv:
+        source("BRELA Register", endpoint=registry_csv, enabled=1)
+    if disable_osm:
+        source("OpenStreetMap", enabled=0)
+
+    if llm_api_key:
+        settings.llm_api_key = llm_api_key
+        settings.llm_enabled = 1
+        if llm_model:
+            settings.llm_model = llm_model
+        if llm_base_url:
+            settings.llm_base_url = llm_base_url
+        settings.flags.ignore_permissions = True
+        settings.save()
+        changed.append("Dalili Settings (LLM)")
+
+    if disable_demo:
+        settings = frappe.get_cached_doc("Dalili Settings")
+        settings.demo_mode = 0
+        settings.flags.ignore_permissions = True
+        settings.save()
+        changed.append("demo_mode off")
+
+    frappe.db.commit()
+    frappe.clear_cache()
+    print("configured: " + ", ".join(changed) if changed else "nothing to change")
+    return live_status()
