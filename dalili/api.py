@@ -392,6 +392,10 @@ def stats() -> dict:
         "stale": stale,
         "verified_rate": round(100.0 * verified / total, 1) if total else 0.0,
         "contacts": count("Dalili Contact"),
+        # Contact-level is the honest headline: a company with 3 contacts and 1
+        # verified number is perfectly callable, but counts as "unverified" at
+        # prospect level. Both numbers are returned, labelled separately.
+        "verified_contacts": count("Dalili Contact", {"verification_status": "Verified"}),
         "icps": count("Dalili ICP", {"status": "Active"}),
         "runs": count("Dalili Agent Run"),
         "lead_lists": count("Dalili Lead List"),

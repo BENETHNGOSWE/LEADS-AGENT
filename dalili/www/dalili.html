@@ -75,6 +75,8 @@
     transition:opacity .2s;pointer-events:none;z-index:99}
   .toast.show{opacity:1}
   a.link{color:var(--navy)}
+.failed .stat b, .failed .stat span{color:#b42318}
+.failed{border-color:#f3c0b8}
 </style>
 </head>
 <body>
@@ -116,7 +118,7 @@ na mimi nitakutafutia makampuni halisi, nikakupatie namba za watu wa muhimu, na 
       <h3>Pipeline</h3>
       <div class="stats" id="stats">
         <div class="stat"><b id="s-prospects">—</b><span>prospects</span></div>
-        <div class="stat"><b id="s-verified">—</b><span>verified</span></div>
+        <div class="stat"><b id="s-verified">—</b><span>verified contacts</span></div>
         <div class="stat"><b id="s-rate">—</b><span>verified rate</span></div>
         <div class="stat"><b id="s-lists">—</b><span>lead lists</span></div>
       </div>
@@ -155,14 +157,31 @@ function esc(value){
     ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 async function call(method, args, verb){
-  const res = await fetch(`/api/method/${method}`, {
-    method: verb || "POST",
-    headers: {"Content-Type":"application/json","X-Frappe-CSRF-Token":CSRF},
-    body: JSON.stringify(args || {})
-  });
-  const data = await res.json();
+  // GET endpoints MUST be called with GET: the API declares methods=["GET"]
+  // and Frappe answers 405 for anything else. GET args go in the query string.
+  const httpVerb = verb || "POST";
+  let url = `/api/method/${method}`;
+  const opts = { method: httpVerb, headers: {} };
+
+  if (httpVerb === "GET") {
+    const qs = new URLSearchParams(args || {}).toString();
+    if (qs) url += "?" + qs;
+  } else {
+    opts.headers["Content-Type"] = "application/json";
+    opts.headers["X-Frappe-CSRF-Token"] = CSRF;
+    opts.body = JSON.stringify(args || {});
+  }
+
+  const res = await fetch(url, opts);
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* non-JSON body */ }
   if (!res.ok || data.exc) {
-    throw new Error((data._server_messages ? JSON.parse(data._server_messages).join(" ") : data.exc) || "Request failed");
+    let detail = data.exc || "";
+    if (data._server_messages) {
+      try { detail = JSON.parse(data._server_messages).join(" "); } catch (e) {}
+    }
+    if (!detail) detail = `${httpVerb} ${method} → HTTP ${res.status}`;
+    throw new Error(String(detail).slice(0, 300));
   }
   return data.message;
 }
@@ -178,16 +197,24 @@ function say(html, who){
 /* ------------ stats + briefs ------------ */
 async function loadStats(){
   try{
-    const s = await call("dalili.api.stats", {}, "POST");
+    const s = await call("dalili.api.stats", {}, "GET");
     $("s-prospects").textContent = s.prospects;
-    $("s-verified").textContent = s.verified;
-    $("s-rate").textContent = (s.verification && s.verification.verified_rate ? s.verification.verified_rate : 0) + "%";
+    $("s-verified").textContent = s.verified_contacts != null ? s.verified_contacts : s.verified;
+    const rate = (s.verification && s.verification.verified_rate) || 0;
+    $("s-rate").textContent = rate + "%";
     $("s-lists").textContent = s.lead_lists;
-  }catch(e){ /* keep quiet on the dashboard */ }
+    $("stats").classList.remove("failed");
+  }catch(e){
+    // Visible failure, not dashes. Silent catches hid a 405 for the whole dashboard.
+    console.error("Dalili stats failed:", e);
+    ["s-prospects","s-verified","s-rate","s-lists"].forEach(id => $(id).textContent = "!");
+    $("stats").classList.add("failed");
+    toast("Couldn't load pipeline: " + e.message);
+  }
 }
 async function loadBriefs(){
   try{
-    const rows = await call("dalili.api.list_briefs", {limit: 8}, "POST");
+    const rows = await call("dalili.api.list_briefs", {limit: 8}, "GET");
     if(!rows || !rows.length) return;
     $("briefs").innerHTML = rows.map(r =>
       `<li data-name="${esc(r.name)}"><b>${esc(r.list_name)}</b>
@@ -196,11 +223,16 @@ async function loadBriefs(){
     document.querySelectorAll("#briefs li[data-name]").forEach(li => {
       li.onclick = () => openBrief(li.dataset.name);
     });
-  }catch(e){}
+    $("briefs").classList.remove("failed");
+  }catch(e){
+    console.error("Dalili briefs failed:", e);
+    $("briefs").innerHTML = `<li class="empty">Couldn't load briefs — ${esc(e.message)}</li>`;
+    $("briefs").classList.add("failed");
+  }
 }
 async function openBrief(name){
   try{
-    const b = await call("dalili.api.get_brief", {lead_list: name, channel: "text"}, "POST");
+    const b = await call("dalili.api.get_brief", {lead_list: name, channel: "text"}, "GET");
     lastList = name;
     $("brief-card").style.display = "block";
     $("brief-title").textContent = b.list_name;
