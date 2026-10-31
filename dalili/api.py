@@ -396,7 +396,7 @@ def stats() -> dict:
         "runs": count("Dalili Agent Run"),
         "lead_lists": count("Dalili Lead List"),
         "conversions": integration.conversion_stats(),
-        "verification": verification.verification_stats(90),
+        "verification": verification.verification_stats(days=90),
         "demo_mode": bool(settings.demo_mode),
         "today": nowdate(),
     }

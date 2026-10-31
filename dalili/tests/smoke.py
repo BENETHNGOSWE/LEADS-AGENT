@@ -85,12 +85,14 @@ def _roles():
 
 
 def _settings():
-    fields = {
-        "enable_portal": "enable_portal",
-        "min_score_default": "min_score_default",
-        "country": "country",
+    # Real fieldnames — checked against dalili_settings.json, not guessed.
+    return {
+        "enabled": frappe.db.get_single_value("Dalili Settings", "enabled"),
+        "demo_mode": frappe.db.get_single_value("Dalili Settings", "demo_mode"),
+        "default_country": frappe.db.get_single_value("Dalili Settings", "default_country"),
+        "min_score_default": frappe.db.get_single_value("Dalili Settings", "min_score_default"),
+        "enable_portal": frappe.db.get_single_value("Dalili Settings", "enable_portal"),
     }
-    return {k: frappe.db.get_single_value("Dalili Settings", v) for k, v in fields.items()}
 
 
 def _parser():
@@ -139,7 +141,11 @@ def _api_chat():
     from dalili.api import chat
 
     out = chat("Nipe kampuni 10 za hoteli Dar es Salaam zenye wafanyakazi zaidi ya 20")
-    return {"icp_name": out.get("icp", {}).get("icp_name") or out.get("icp_name")}
+    parsed = out.get("parsed") or {}
+    if not parsed.get("sector"):
+        raise AssertionError(f"chat did not parse a sector: {list(out)}")
+    return {"icp_name": parsed.get("icp_name"), "ready": out.get("ready"),
+            "questions": len(out.get("questions") or [])}
 
 
 def _api_list_briefs():
@@ -153,7 +159,11 @@ def _api_get_run():
     from dalili.api import get_run
 
     out = get_run(_first_run())
-    return {"status": out.get("status"), "delivered": out.get("delivered")}
+    counters = out.get("counters") or {}
+    if not counters.get("discovered"):
+        raise AssertionError(f"run has no counters: {counters}")
+    return {"status": out.get("status"), "discovered": counters.get("discovered"),
+            "delivered": counters.get("delivered"), "steps": len(out.get("steps") or [])}
 
 
 def _brief_text():
