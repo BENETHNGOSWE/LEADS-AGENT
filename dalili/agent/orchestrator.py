@@ -473,7 +473,10 @@ def execute(icp_name: str, triggered_by: str | None = None,
         )
         for rank, row in enumerate(selected, start=1):
             contact = frappe.db.get_value(
-                "Dalili Contact", row["contact"], ["full_name", "phone", "whatsapp"], as_dict=True
+                "Dalili Contact",
+                row["contact"],
+                ["full_name", "phone", "whatsapp", "verification_status", "last_verified_on"],
+                as_dict=True,
             ) if row["contact"] else None
             lead_list.append(
                 "items",
@@ -486,6 +489,12 @@ def execute(icp_name: str, triggered_by: str | None = None,
                     "phone": (contact or {}).get("phone") or "",
                     "whatsapp": (contact or {}).get("whatsapp") or "",
                     "score": row["score"],
+                    # Carrying the verification date onto the item is what makes
+                    # lead_list.verified_count non-zero. Without it every brief
+                    # advertised "verified 0/15" while the contacts were verified.
+                    "verified_on": (contact or {}).get("last_verified_on")
+                    if (contact or {}).get("verification_status") == "Verified"
+                    else None,
                     "why_now": row["why_now"],
                     "included": 1,
                 },

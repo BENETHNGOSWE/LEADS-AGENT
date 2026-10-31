@@ -77,6 +77,12 @@
   a.link{color:var(--navy)}
 .failed .stat b, .failed .stat span{color:#b42318}
 .failed{border-color:#f3c0b8}
+/* The brief is the deliverable: give it a readable pane, not a 250px column. */
+#brief-card{position:fixed;top:72px;right:24px;bottom:24px;width:min(760px,92vw);z-index:60;
+  display:none;flex-direction:column;box-shadow:0 24px 60px rgba(15,23,42,.30)}
+#brief-card.open{display:flex}
+#brief-card .brief-body{overflow:auto;flex:1;white-space:pre-wrap}
+#brief-card .row{margin-top:10px}
 </style>
 </head>
 <body>
@@ -136,6 +142,7 @@ na mimi nitakutafutia makampuni halisi, nikakupatie namba za watu wa muhimu, na 
         <button class="btn sm" id="copy-brief">Copy for WhatsApp</button>
         <button class="btn sm ghost" id="csv-brief">CSV</button>
         <button class="btn sm ghost" id="open-desk">Open in Desk</button>
+        <button class="btn sm ghost" id="close-brief">Close</button>
       </div>
     </section>
   </aside>
@@ -234,14 +241,16 @@ async function openBrief(name){
   try{
     const b = await call("dalili.api.get_brief", {lead_list: name, channel: "text"}, "GET");
     lastList = name;
-    $("brief-card").style.display = "block";
+    $("brief-card").classList.add("open");
     $("brief-title").textContent = b.list_name;
     $("brief-body").textContent = b.content;
-    $("brief-card").scrollIntoView({behavior:"smooth", block:"nearest"});
+    
   }catch(e){ toast(e.message); }
 }
 
 /* ------------ the conversation ------------ */
+$("close-brief").addEventListener("click", () => $("brief-card").classList.remove("open"));
+
 $("composer").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const prompt = $("prompt").value.trim();
@@ -269,7 +278,7 @@ $("composer").addEventListener("submit", async (ev) => {
       : "";
 
     const questions = (res.questions || []).length
-      ? `<span class="small">${esc((res.questions || []).join(" "))}</span>` : "";
+      ? `<div class="small">${(res.questions || []).map(q => "• " + esc(q)).join("<br>")}</div>` : "";
 
     const node = say(`Nimekuelewa. This is what I'll search for:${table}${questions}
       <span class="small">Confirm and I'll build the list.</span>`);

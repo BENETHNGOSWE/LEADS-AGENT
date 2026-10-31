@@ -75,10 +75,19 @@ def build_text(lead_list_name: str, *, limit: int = MAX_TEXT_ITEMS) -> str:
                          (" (WhatsApp)" if row.whatsapp else ""))
         if row.why_now:
             lines.append(f"   ⚡ {row.why_now}")
-        if row.phone:
-            link = whatsapp_link(row.whatsapp or row.phone, _opener(lead_list, row))
+        if row.whatsapp or row.phone:
+            # Plain tap-to-chat link. Embedding the opener as ?text=<urlencoded>
+            # put "%H%20Emmanuel%20Macha%2C..." into the message body, which is
+            # what a customer would actually see. Keep it clean.
+            link = whatsapp_link(row.whatsapp or row.phone)
             if link:
                 lines.append(f"   🔗 {link}")
+            # The suggested opener still helps — but as readable text, and only
+            # for the first three leads so the brief stays scannable.
+            if row.rank <= 3:
+                opener = _opener(lead_list, row)
+                if opener:
+                    lines.append(f"   💬 {opener}")
         lines.append("")
 
     if settings.brief_signature:

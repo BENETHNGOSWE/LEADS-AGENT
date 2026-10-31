@@ -194,6 +194,35 @@ def _brief_csv():
     return f"{len(lines) - 1} rows"
 
 
+def _brief_has_no_encoded_junk():
+    """The brief goes to a customer. Percent-encoding is a bug, not a detail."""
+    from dalili.brief import build_text
+
+    text = build_text(_first_lead_list())
+    for bad in ("%20", "%2C", "%27", "?text="):
+        if bad in text:
+            raise AssertionError(f"encoded/debug junk found in brief: {bad!r}")
+    return "clean"
+
+
+def _lead_list_verified_consistency():
+    """verified_count must reflect the items, and items must reflect their contacts."""
+    name = _first_lead_list()
+    doc = frappe.get_doc("Dalili Lead List", name)
+    stamped = sum(1 for row in doc.items or [] if row.verified_on)
+    if (doc.verified_count or 0) != stamped:
+        raise AssertionError(
+            f"verified_count={doc.verified_count} but {stamped} item(s) carry verified_on"
+        )
+    verified_contacts = frappe.db.count("Dalili Contact", {"verification_status": "Verified"})
+    if verified_contacts and not stamped:
+        raise AssertionError(
+            f"site has {verified_contacts} verified contact(s) but no lead-list item is stamped — "
+            "items are built without verified_on"
+        )
+    return {"verified_count": doc.verified_count, "items": len(doc.items or [])}
+
+
 def _api_get_brief():
     from dalili.api import get_brief
 
@@ -283,6 +312,8 @@ def run_all() -> None:
         ("prospect doc + score breakdown", _prospect_form_data, False),
         ("report: Verification Funnel", _report_verification_funnel, False),
         ("report: ICP Performance", _report_icp_performance, False),
+        ("brief has no encoded junk", _brief_has_no_encoded_junk, False),
+        ("lead list verified consistency", _lead_list_verified_consistency, False),
         ("api.export_csv", _export_csv, True),
     ]
 

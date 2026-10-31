@@ -221,3 +221,35 @@ def after_migrate():
         integration.ensure_custom_fields()
     except Exception:
         frappe.log_error(title="Dalili: after_migrate failed", message=frappe.get_traceback())
+
+
+def backfill_lead_list_verified():
+    """Fill verified_on on existing lead-list items from their linked contacts.
+
+    Lead lists built before this fix carried no verified date on their items, so
+    verified_count read 0 even when every contact was verified. Run once:
+
+        bench --site <site> execute dalili.install.backfill_lead_list_verified
+    """
+    fixed = 0
+    for name in frappe.get_all("Dalili Lead List", pluck="name"):
+        doc = frappe.get_doc("Dalili Lead List", name)
+        changed = False
+        for row in doc.items or []:
+            if row.contact and not row.verified_on:
+                data = frappe.db.get_value(
+                    "Dalili Contact",
+                    row.contact,
+                    ["verification_status", "last_verified_on"],
+                    as_dict=True,
+                ) or {}
+                if data.get("verification_status") == "Verified" and data.get("last_verified_on"):
+                    row.verified_on = data["last_verified_on"]
+                    changed = True
+                    fixed += 1
+        if changed:
+            doc.flags.ignore_permissions = True
+            doc.save()  # validate() recomputes verified_count
+    frappe.db.commit()
+    print(f"backfilled verified_on on {fixed} lead-list item(s)")
+    return fixed
